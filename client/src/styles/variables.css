@@ -1,0 +1,49 @@
+:root {
+  /* Colors */
+  --bg-color: #ffffff;
+  --text-color: #111111;
+  --text-secondary: #666666;
+  --text-light: #ffffff;
+  --accent-color: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.5);
+  --border-color: #e5e5e5;
+  --surface-color: #f9fafb;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.3);
+
+  /* Typography */
+  --font-primary: 'Inter', sans-serif;
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 48px;
+  --font-size-hero: 64px;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --container-width: 1200px;
+  --container-padding: 24px;
+
+  /* Animation */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+.dark {
+  --bg-color: #0a0a0a;
+  --text-color: #ffffff;
+  --text-secondary: #a3a3a3;
+  --border-color: #333333;
+  --surface-color: #171717;
+  --glass-bg: rgba(10, 10, 10, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
