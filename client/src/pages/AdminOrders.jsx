@@ -1,21 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
-import { Search, Eye, MoreHorizontal } from 'lucide-react';
+import { Search, Eye, MoreHorizontal, Loader2 } from 'lucide-react';
+import { getOrders, updateOrderStatus } from '../services/orderService';
+import { useToast } from '../context/ToastContext';
 
 const AdminOrders = () => {
-    // Mock Data
-    const [orders, setOrders] = useState([
-        { id: '#ORD-7833', customer: 'Alex Johnson', date: 'Oct 25, 2026', total: '$120.00', status: 'Pending', items: 3 },
-        { id: '#ORD-7832', customer: 'Sarah Williams', date: 'Oct 24, 2026', total: '$85.50', status: 'Shipped', items: 1 },
-        { id: '#ORD-7831', customer: 'Michael Brown', date: 'Oct 24, 2026', total: '$245.00', status: 'Delivered', items: 4 },
-        { id: '#ORD-7830', customer: 'Emily Davis', date: 'Oct 23, 2026', total: '$45.00', status: 'Processing', items: 1 },
-        { id: '#ORD-7829', customer: 'David Wilson', date: 'Oct 22, 2026', total: '$165.00', status: 'Delivered', items: 2 },
-    ]);
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const { addToast } = useToast();
 
-    const handleStatusChange = (id, newStatus) => {
-        setOrders(orders.map(order =>
-            order.id === id ? { ...order, status: newStatus } : order
-        ));
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const data = await getOrders();
+                setOrders(data);
+            } catch (err) {
+                addToast('Failed to load orders', 'error');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchOrders();
+    }, [addToast]);
+
+    const handleStatusChange = async (id, newStatus) => {
+        try {
+            await updateOrderStatus(id, newStatus);
+            setOrders(orders.map(order =>
+                order.id === id ? { ...order, status: newStatus } : order
+            ));
+            addToast('Order status updated', 'success');
+        } catch (err) {
+            addToast(err.message || 'Failed to update order status', 'error');
+        }
     };
 
     const getStatusColor = (status) => {
@@ -61,11 +78,11 @@ const AdminOrders = () => {
                             const statusStyle = getStatusColor(order.status);
                             return (
                                 <tr key={order.id} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                                    <td style={{ padding: '16px', fontWeight: '500' }}>{order.id}</td>
-                                    <td style={{ padding: '16px' }}>{order.customer}</td>
-                                    <td style={{ padding: '16px', opacity: 0.7 }}>{order.date}</td>
-                                    <td style={{ padding: '16px' }}>{order.items}</td>
-                                    <td style={{ padding: '16px', fontWeight: '500' }}>{order.total}</td>
+                                    <td style={{ padding: '16px', fontWeight: '500' }}>#ORD-{order.id}</td>
+                                    <td style={{ padding: '16px' }}>{order.shippingName || order.customerEmail || 'Guest'}</td>
+                                    <td style={{ padding: '16px', opacity: 0.7 }}>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                    <td style={{ padding: '16px' }}>{order.itemsCount}</td>
+                                    <td style={{ padding: '16px', fontWeight: '500' }}>${typeof order.total === 'number' ? order.total.toFixed(2) : order.total}</td>
                                     <td style={{ padding: '16px' }}>
                                         <select
                                             value={order.status}
