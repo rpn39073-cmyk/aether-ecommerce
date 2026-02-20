@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Home from './pages/Home';
 import { ProductProvider } from './context/ProductContext';
 import { CartProvider } from './context/CartContext';
@@ -37,6 +37,19 @@ function ProtectedRoute({ children, adminOnly = false }) {
   return children;
 }
 
+function PublicLayout() {
+  return (
+    <div className="app">
+      <Navbar />
+      <CartDrawer />
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
 function App() {
   return (
     <Router>
@@ -45,35 +58,29 @@ function App() {
           <ProductProvider>
             <CartProvider>
               <WishlistProvider>
-                <div className="app">
-                  <Navbar />
-                  <CartDrawer />
-                  <main>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/shop" element={<Shop />} />
-                      <Route path="/wishlist" element={<Wishlist />} />
-                      <Route path="/product/:id" element={<ProductDetails />} />
-                      <Route path="/checkout" element={<Checkout />} />
-                      <Route path="/order-success" element={<OrderSuccess />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/signup" element={<Signup />} />
+                <Routes>
+                  {/* Public Routes with Navbar & Footer */}
+                  <Route element={<PublicLayout />}>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/shop" element={<Shop />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
+                    <Route path="/product/:id" element={<ProductDetails />} />
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/order-success" element={<OrderSuccess />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  </Route>
 
-                      <Route path="/signup" element={<Signup />} />
-
-                      {/* Admin Routes */}
-                      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                      <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
-                      <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminProducts /></ProtectedRoute>} />
-                      <Route path="/admin/products/new" element={<ProtectedRoute adminOnly><AdminProductEditor /></ProtectedRoute>} />
-                      <Route path="/admin/products/edit/:id" element={<ProtectedRoute adminOnly><AdminProductEditor /></ProtectedRoute>} />
-                      <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
-                    </Routes>
-                  </main>
-                  <Footer />
-                </div>
+                  {/* Isolated Admin Routes */}
+                  <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+                  <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminProducts /></ProtectedRoute>} />
+                  <Route path="/admin/products/new" element={<ProtectedRoute adminOnly><AdminProductEditor /></ProtectedRoute>} />
+                  <Route path="/admin/products/edit/:id" element={<ProtectedRoute adminOnly><AdminProductEditor /></ProtectedRoute>} />
+                  <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminOrders /></ProtectedRoute>} />
+                </Routes>
               </WishlistProvider>
             </CartProvider>
           </ProductProvider>
